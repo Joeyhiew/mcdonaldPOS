@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, Form, Radio, Modal, Card, Row, Col } from 'antd';
+import { Button, Checkbox, Form, Radio, Modal, Row, Col } from 'antd';
 import type { FormProps } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
