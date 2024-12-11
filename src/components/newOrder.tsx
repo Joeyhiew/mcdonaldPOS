@@ -48,7 +48,6 @@ const CreateNewOrder = () => {
       id: getNewOrderId(),
       customerType: values.customerType,
       items: values.items,
-      status: OrderStatus.PENDING,
     };
     handleAddOrder(newOrder);
   };
