@@ -22,7 +22,8 @@ const CompletedOrder = () => {
       {hasOrders ? (
         <div className="flex flex-col gap-4 overflow-y-hidden h-[calc(100%-48px)] hover:overflow-y-scroll">
           {orders.map((order) => (
-            <Card
+              <Card
+                  key={order.id}
               size="small"
               title={`Order #${order.id}`}
               extra={getUserTag(order.customerType)}

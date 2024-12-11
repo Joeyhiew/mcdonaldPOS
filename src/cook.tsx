@@ -116,7 +116,7 @@ const Cook = () => {
         ) : (
           <>
             {bots?.map((bot) => (
-              <Card title={`Bot ${bot.id}`} extra={getBotTag(bot.status)}>
+                <Card key={bot.id} title={`Bot ${bot.id}`} extra={getBotTag(bot.status)}>
                 {bot.status === BotStatus.IDLE ? (
                   <div>Bot is free</div>
                 ) : (

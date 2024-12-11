@@ -14,7 +14,6 @@ export enum CustomerType {
 export type OrderType = {
   id: number;
   customerType: CustomerType;
-  status: OrderStatus;
   items: string[];
 };
 
@@ -90,17 +89,9 @@ export const orderSlice = createSlice({
           );
           if (processingIndex !== -1) {
             const processingOrder = state.pendingOrders[processingIndex];
-            console.log(
-              'pengin',
-              state.pendingOrders,
-              processingIndex,
-              processingOrder
-            );
 
             state.pendingOrders.splice(processingIndex, 1);
-            console.log('pengin', state.pendingOrders);
             state.processingOrders.push(processingOrder);
-            console.log('processing', state.processingOrders);
           }
           break;
         case OrderStatus.COMPLETE:
@@ -114,10 +105,6 @@ export const orderSlice = createSlice({
             state.completedOrders.push(completedOrder);
           }
           break;
-      }
-      const order = state.pendingOrders.find((order) => order.id === orderId);
-      if (order) {
-        order.status = status;
       }
     },
   },
