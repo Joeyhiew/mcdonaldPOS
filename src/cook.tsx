@@ -104,6 +104,10 @@ const Cook = () => {
     newTimerData.set(botId, timerId);
     setTimer(newTimerData);
   }
+    
+    function shouldDisableRemoveBot() {
+      return bots.length === 0;
+    }
 
   const handleAddBot = () => {
     dispatch(addBots());
@@ -154,7 +158,7 @@ const Cook = () => {
         <h1 className="text-theme-yellow font-bold text-2xl mb-4">Kitchen</h1>
         <div className="flex gap-2">
           <Button onClick={handleAddBot}>+ Bot</Button>
-          <Button onClick={handleRemoveBot}>- Bot</Button>
+                  <Button onClick={handleRemoveBot} disabled={shouldDisableRemoveBot()}>- Bot</Button>
         </div>
       </div>
       <>

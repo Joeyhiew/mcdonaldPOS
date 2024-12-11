@@ -19,7 +19,7 @@ Requirements
 Edge cases
 
 1. Minimum number of cooking bots is 0. Will disable the "- Bot" button.
-2. If 2 VIP customers send an order at the same time, will randomly decide which one will be placed in front of the other.
+2. Put processing order back to the front of queue based on customer type. If bot was processing a normal order, it will be placed at the front of normal queue. If bot was processing a VIP order, it will be placed at the front of VIP queue.
 
 Logic:
 
