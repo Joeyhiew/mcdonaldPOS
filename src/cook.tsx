@@ -1,4 +1,4 @@
-import { Button, Card, Tag } from 'antd';
+import { Button, Card, Tag, Progress } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBots, BotStatus, removeBots, updateBotStatus } from './store/bots';
 import { StoreType } from './store/store';
@@ -34,6 +34,7 @@ const Cook = () => {
           orderId: order.id,
           status: BotStatus.BUSY,
           botId: targetBot.id,
+          progress: 0,
         })
       );
       // set order status to processing
@@ -44,19 +45,39 @@ const Cook = () => {
         })
       );
 
-      // simulate cooking time and set order to complete and bot to idle
-      setTimeout(() => {
+        // set interval to update progress bar every 0.1sec
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 1;
+        dispatch(
+          updateBotStatus({
+            orderId: order.id,
+            status: BotStatus.BUSY,
+            botId: targetBot.id,
+            progress,
+          })
+        );
+        if (progress >= 100) {
+          clearInterval(interval);
+        }
+      }, 100);
+        
+      // simulate cooking time
+        setTimeout(() => {
+          // set order to complete
         dispatch(
           updateOrderStatus({
             orderId: order.id,
             status: OrderStatus.COMPLETE,
           })
         );
+            // set bot to idle
         dispatch(
           updateBotStatus({
             orderId: null,
             status: BotStatus.IDLE,
             botId: targetBot.id,
+            progress: null,
           })
         );
       }, 10000);
@@ -116,7 +137,11 @@ const Cook = () => {
         ) : (
           <>
             {bots?.map((bot) => (
-                <Card key={bot.id} title={`Bot ${bot.id}`} extra={getBotTag(bot.status)}>
+              <Card
+                key={bot.id}
+                title={`Bot ${bot.id}`}
+                extra={getBotTag(bot.status)}
+              >
                 {bot.status === BotStatus.IDLE ? (
                   <div>Bot is free</div>
                 ) : (
@@ -124,6 +149,7 @@ const Cook = () => {
                     <div>
                       <h3>Order # {bot.orderId}</h3>
                     </div>
+                    {bot.progress && <Progress percent={bot.progress} />}
                   </div>
                 )}
               </Card>

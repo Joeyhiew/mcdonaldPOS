@@ -9,6 +9,7 @@ export type Bots = {
   id: number;
   status: BotStatus;
   orderId: number | null;
+  progress: number | null;
 };
 
 export type BotsState = {
@@ -25,6 +26,7 @@ export type UpdateBotStatusPayloadType = {
   botId: number;
   status: BotStatus;
   orderId: number | null;
+  progress: number | null;
 };
 
 export const botsSlice = createSlice({
@@ -38,6 +40,7 @@ export const botsSlice = createSlice({
         id: newBotId,
         status: BotStatus.IDLE,
         orderId: null,
+        progress: null,
       };
       state.bots = [...state.bots, newBot];
     },
@@ -49,46 +52,22 @@ export const botsSlice = createSlice({
       state,
       action: PayloadAction<UpdateBotStatusPayloadType>
     ) => {
-      const { botId, status, orderId } = action.payload;
+      const { botId, status, orderId, progress } = action.payload;
       state.bots = state.bots.map((bot) => {
         if (bot.id === botId) {
           return {
             ...bot,
             status,
             orderId,
+            progress,
           };
         }
         return bot;
       });
     },
-    setStatusToBusyThenIdle: (state, action) => {
-      const { botId, orderId } = action.payload;
-      state.bots?.map((bot) => {
-        if (bot.id === botId) {
-          return {
-            ...bot,
-            status: BotStatus.BUSY,
-            orderId,
-          };
-        }
-      });
-
-      setTimeout(() => {
-        state.bots?.map((bot) => {
-          if (bot.id === botId) {
-            return {
-              ...bot,
-              status: BotStatus.IDLE,
-              orderId: null,
-            };
-          }
-        });
-      }, 10000);
-    },
   },
 });
 
-export const { addBots, removeBots, setStatusToBusyThenIdle, updateBotStatus } =
-  botsSlice.actions;
+export const { addBots, removeBots, updateBotStatus } = botsSlice.actions;
 
 export default botsSlice.reducer;
