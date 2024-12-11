@@ -6,7 +6,6 @@ import {
   addNormalOrder,
   addVIPOrder,
   CustomerType,
-  OrderStatus,
   OrderType,
 } from '../store/orders';
 import { StoreType } from '../store/store';

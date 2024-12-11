@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { Card, Tag } from 'antd';
+import { Card } from 'antd';
 import { getUserTag } from './utils';
 import { StoreType } from './store/store';
 import CreateNewOrder from './components/newOrder';
