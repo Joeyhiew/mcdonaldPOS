@@ -11,7 +11,7 @@ const CompletedOrder = () => {
 
   return (
     <div
-      className="flex-1 border rounded-lg h-full p-8"
+      className="flex-1 border rounded-lg h-full w-full min-w-80 p-8"
       style={{ backgroundColor: 'white' }}
     >
       <div className="flex justify-between mb-4">

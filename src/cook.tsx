@@ -104,10 +104,10 @@ const Cook = () => {
     newTimerData.set(botId, timerId);
     setTimer(newTimerData);
   }
-    
-    function shouldDisableRemoveBot() {
-      return bots.length === 0;
-    }
+
+  function shouldDisableRemoveBot() {
+    return bots.length === 0;
+  }
 
   const handleAddBot = () => {
     dispatch(addBots());
@@ -151,14 +151,16 @@ const Cook = () => {
 
   return (
     <div
-      className="flex-1 border rounded-lg h-full p-8"
+      className="flex-1 border rounded-lg h-full w-full min-w-80 p-8"
       style={{ backgroundColor: 'white' }}
     >
       <div className="flex justify-between">
         <h1 className="text-theme-yellow font-bold text-2xl mb-4">Kitchen</h1>
         <div className="flex gap-2">
           <Button onClick={handleAddBot}>+ Bot</Button>
-                  <Button onClick={handleRemoveBot} disabled={shouldDisableRemoveBot()}>- Bot</Button>
+          <Button onClick={handleRemoveBot} disabled={shouldDisableRemoveBot()}>
+            - Bot
+          </Button>
         </div>
       </div>
       <>
@@ -167,7 +169,7 @@ const Cook = () => {
             No cooking bots. Go create some!
           </div>
         ) : (
-          <div className='flex flex-col gap-4 h-[calc(100%-48px)] overflow-y-scroll'>
+          <div className="flex flex-col gap-4 h-[calc(100%-48px)] overflow-y-scroll">
             {bots?.map((bot) => (
               <Card
                 key={bot.id}

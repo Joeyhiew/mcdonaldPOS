@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, Form, Radio, Modal } from 'antd';
+import { Button, Checkbox, Form, Radio, Modal, Card, Row, Col } from 'antd';
 import type { FormProps } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -102,10 +102,18 @@ const CreateNewOrder = () => {
             { required: true, message: 'Please select at least 1 food item' },
           ]}
         >
-          <Checkbox.Group>
-            <Checkbox value="apple">Apple</Checkbox>
-            <Checkbox value="banana">Banana</Checkbox>
-            <Checkbox value="orange">Orange</Checkbox>
+          <Checkbox.Group style={{ width: '100%' }}>
+            <Row>
+              <Col span={8}>
+                <Checkbox value="fries">Fries</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="burger">Burger</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="cola">Cola</Checkbox>
+              </Col>
+            </Row>
           </Checkbox.Group>
         </Form.Item>
       </Modal>
