@@ -19,7 +19,7 @@ const Order = () => {
         <CreateNewOrder />
       </div>
       {hasOrders ? (
-        <div className="flex flex-col gap-4 overflow-y-hidden h-[calc(100%-48px)] hover:overflow-y-scroll">
+        <div className="flex flex-col gap-4 h-[calc(100%-48px)] overflow-y-scroll">
           {orders.map((order) => (
             <Card
               key={order.id}

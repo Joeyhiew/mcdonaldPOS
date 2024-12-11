@@ -2,16 +2,17 @@ import { Button, Card, Tag, Progress } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBots, BotStatus, removeBots, updateBotStatus } from './store/bots';
 import { StoreType } from './store/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  addNormalOrder,
-  addVIPOrder,
+  addUnprocessedNormalOrder,
+  addUnprocessedVIPOrder,
   CustomerType,
   OrderStatus,
   updateOrderStatus,
 } from './store/orders';
 
 const Cook = () => {
+  const [timer, setTimer] = useState(new Map());
   const dispatch = useDispatch();
   const bots = useSelector((state: StoreType) => state.bots.bots);
   const pendingOrders = useSelector(
@@ -25,64 +26,84 @@ const Cook = () => {
 
   useEffect(() => {
     if (freeBots.length > 0 && pendingOrders.length > 0) {
-      const order = pendingOrders[0];
-      const targetBot = freeBots[0];
+      const orderId = pendingOrders[0].id;
+      const botId = freeBots[0].id;
 
       // set bot to busy
-      dispatch(
-        updateBotStatus({
-          orderId: order.id,
-          status: BotStatus.BUSY,
-          botId: targetBot.id,
-          progress: 0,
-        })
-      );
-      // set order status to processing
-      dispatch(
-        updateOrderStatus({
-          orderId: order.id,
-          status: OrderStatus.PROCESSING,
-        })
-      );
+      setBotToBusy(orderId, botId);
 
-        // set interval to update progress bar every 0.1sec
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 1;
-        dispatch(
-          updateBotStatus({
-            orderId: order.id,
-            status: BotStatus.BUSY,
-            botId: targetBot.id,
-            progress,
-          })
-        );
-        if (progress >= 100) {
-          clearInterval(interval);
-        }
-      }, 100);
-        
+      // set order status to processing
+      setOrderToProcessing(orderId);
+
+      // set interval to update progress bar every 0.1sec
+      updateProgressBar(orderId, botId);
+
       // simulate cooking time
-        setTimeout(() => {
-          // set order to complete
-        dispatch(
-          updateOrderStatus({
-            orderId: order.id,
-            status: OrderStatus.COMPLETE,
-          })
-        );
-            // set bot to idle
-        dispatch(
-          updateBotStatus({
-            orderId: null,
-            status: BotStatus.IDLE,
-            botId: targetBot.id,
-            progress: null,
-          })
-        );
-      }, 10000);
+      setCookingTimer(orderId, botId);
     }
   }, [freeBots, pendingOrders]);
+
+  function setBotToBusy(orderId: number, botId: number) {
+    dispatch(
+      updateBotStatus({
+        orderId: orderId,
+        status: BotStatus.BUSY,
+        botId: botId,
+        progress: 0,
+      })
+    );
+  }
+
+  function setOrderToProcessing(orderId: number) {
+    dispatch(
+      updateOrderStatus({
+        orderId: orderId,
+        status: OrderStatus.PROCESSING,
+      })
+    );
+  }
+
+  function updateProgressBar(orderId: number, botId: number) {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 1;
+      dispatch(
+        updateBotStatus({
+          orderId: orderId,
+          status: BotStatus.BUSY,
+          botId: botId,
+          progress,
+        })
+      );
+      if (progress >= 100) {
+        clearInterval(interval);
+      }
+    }, 100);
+  }
+
+  function setCookingTimer(orderId: number, botId: number) {
+    const timerId = setTimeout(() => {
+      // set order to complete
+      dispatch(
+        updateOrderStatus({
+          orderId: orderId,
+          status: OrderStatus.COMPLETE,
+        })
+      );
+      // set bot to idle
+      dispatch(
+        updateBotStatus({
+          orderId: null,
+          status: BotStatus.IDLE,
+          botId: botId,
+          progress: null,
+        })
+      );
+    }, 10000);
+    const newTimerData = new Map(timer);
+    newTimerData.set(botId, timerId);
+    setTimer(newTimerData);
+  }
 
   const handleAddBot = () => {
     dispatch(addBots());
@@ -94,13 +115,20 @@ const Cook = () => {
     const processingOrder = processingOrders.find(
       (order) => order.id === processingOrderId
     );
+    // cancel timer
+    if (timer.has(botToBeRemoved.id)) {
+      clearTimeout(timer.get(botToBeRemoved.id));
+      const newTimerData = new Map(timer);
+      newTimerData.delete(botToBeRemoved.id);
+      setTimer(newTimerData);
+    }
     // if bot is currently processing an order, add it to the pending queue before destroying bot
     if (processingOrder) {
       const isVIP = processingOrder.customerType === CustomerType.VIP;
       if (isVIP) {
-        dispatch(addVIPOrder({ newOrder: processingOrder }));
+        dispatch(addUnprocessedVIPOrder({ newOrder: processingOrder }));
       } else {
-        dispatch(addNormalOrder({ newOrder: processingOrder }));
+        dispatch(addUnprocessedNormalOrder({ newOrder: processingOrder }));
       }
     }
     dispatch(removeBots());
@@ -135,7 +163,7 @@ const Cook = () => {
             No cooking bots. Go create some!
           </div>
         ) : (
-          <>
+          <div className='flex flex-col gap-4 h-[calc(100%-48px)] overflow-y-scroll'>
             {bots?.map((bot) => (
               <Card
                 key={bot.id}
@@ -154,7 +182,7 @@ const Cook = () => {
                 )}
               </Card>
             ))}
-          </>
+          </div>
         )}
       </>
     </div>

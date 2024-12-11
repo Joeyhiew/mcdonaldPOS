@@ -50,6 +50,17 @@ export const orderSlice = createSlice({
       state.pendingOrders.push(newOrder);
       state.lastOrderId++;
     },
+    addUnprocessedNormalOrder: (
+      state,
+      action: PayloadAction<AddOrderPayloadType>
+    ) => {
+      const { newOrder } = action.payload;
+      // insert normal order at the front of normal orders
+      const lastVIPIndex = state.pendingOrders.findLastIndex(
+        (order) => order.customerType === CustomerType.VIP
+      );
+      state.pendingOrders.splice(lastVIPIndex + 1, 0, newOrder);
+    },
     addVIPOrder: (state, action: PayloadAction<AddOrderPayloadType>) => {
       const lastVIPIndex = state.pendingOrders.findLastIndex(
         (order) => order.customerType === CustomerType.VIP
@@ -59,6 +70,14 @@ export const orderSlice = createSlice({
       // if there exists VIP orders, insert after the last VIP order
       state.pendingOrders.splice(lastVIPIndex + 1, 0, newOrder);
       state.lastOrderId++;
+    },
+    addUnprocessedVIPOrder: (
+      state,
+      action: PayloadAction<AddOrderPayloadType>
+    ) => {
+      const { newOrder } = action.payload;
+      // insert unprocessed VIP order at the front of the queue
+      state.pendingOrders.splice(0, 0, newOrder);
     },
     updateOrderStatus: (
       state,
@@ -110,7 +129,12 @@ export const orderSlice = createSlice({
   },
 });
 
-export const { addNormalOrder, addVIPOrder, updateOrderStatus } =
-  orderSlice.actions;
+export const {
+  addNormalOrder,
+  addVIPOrder,
+  updateOrderStatus,
+  addUnprocessedNormalOrder,
+  addUnprocessedVIPOrder,
+} = orderSlice.actions;
 
 export default orderSlice.reducer;
