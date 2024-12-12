@@ -10,7 +10,7 @@ const App = () => {
         Welcome to
         <img className="ml-2" src={mcLogo} width={55} />
       </h1>
-      <div className="flex flex-col justify-around align-middle h-full items-center gap-24 p-24 md:flex-row">
+      <div className="flex flex-col justify-around align-middle h-[calc(100%-28px)] items-center gap-24 p-24 md:flex-row">
         <Order />
         <Cook />
         <CompletedOrder />
